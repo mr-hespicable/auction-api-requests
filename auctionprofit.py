@@ -58,14 +58,12 @@ while True:
         
     for soldItem in soldauctionList:
         uuid = soldItem['buyer']
-        if uuid == '2e82ec5b72354497adfde07170979a72':
-            gzipped_data = soldItem['item_bytes']
-            decode_inventory_data(gzipped_data)
-            exit()
-            
-            
-        else:
-            print('No matching auctions found.')
-    time.sleep(15)
+        if uuid != '2e82ec5b72354497adfde07170979a72':
+            continue
+        gzipped_data = soldItem['item_bytes']
+        decode_inventory_data(gzipped_data)
+        print('ended')
+           
+    time.sleep(30)
     print('halfway')
-    time.sleep(15)  
+    time.sleep(30)  

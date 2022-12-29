@@ -2,9 +2,9 @@ import time, io, requests, os, nbt, base64
 
 #thanks to ShadowMobX#0220 for refining this function. give him an internship
 debugMode = 0
-USERNAME = 'websafe'#input('paste username here\n')
-API_KEY = '73d5e91d-77c2-4df2-97fd-5da88f16ed8e'#input('paste api key here\n')
-PREFERRED_PROFILE = 'Pineapple'#input('paste name of active profile here. case matters\n')
+USERNAME = input('paste username here\n')
+API_KEY = input('paste api key here\n')
+PREFERRED_PROFILE = input('paste name of active profile here. case matters\n')
 
 def response(call):
     r = requests.get(call)

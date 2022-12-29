@@ -1,101 +1,146 @@
-
-import gzip
-import time
-import io
-import requests
-import json
-import nbt
-import base64
-
-
-def getInfo(call):
-    r = requests.get(call)
-    return r.json
-def decode_inventory_data(raw_data):
-    return nbt.nbt.NBTFile(fileobj=io.BytesIO(base64.b64decode(raw_data)))
-
-    
-def id_extractor_nbt(nbt_data):
-    extra = nbt_data.tags[0].tags[0]['tag']['ExtraAttributes']
-    return extra['id']
-
-def name_extractor_nbt(nbt_data):
-    display = nbt_data.tags[0].tags[0]['tag']['display']
-    return display['Name']
-
+import time, io, requests, os, nbt, base64
 
 #thanks to ShadowMobX#0220 for refining this function. give him an internship                                                                                                                                        #d4688752-9597-473e-818a-1dba30f81e91
-debugMode = 0       
+debugMode = 1     
 USERNAME = 'websafe'#input('paste username here\n')
-API_KEY = 'd4688752-9597-473e-818a-1dba30f81e91'#input('paste api key here\n')
+API_KEY = '73d5e91d-77c2-4df2-97fd-5da88f16ed8e'#input('paste api key here\n')
 PREFERRED_PROFILE = 'Pineapple'#input('paste name of active profile here. case matters\n')
-mojangURL = f"https://api.mojang.com/users/profiles/minecraft/{USERNAME}?"
-mojangResponse = requests.get(mojangURL)
-UUID = mojangResponse.json()['id']
-profileURL = f'https://api.hypixel.net/player?key={API_KEY}&uuid={UUID}'
-if debugMode == 1:
-    print(f'profileURL = {profileURL}')
-profileResponse = requests.get(profileURL)
-profileList = profileResponse.json()['player']['stats']['SkyBlock']['profiles']
-for profile in profileList:
-    profileName = profileResponse.json()['player']['stats']['SkyBlock']['profiles'][profile]['cute_name']
-    if profileName == PREFERRED_PROFILE:
-        pref_profile_id = profileResponse.json()['player']['stats']['SkyBlock']['profiles'][profile]['profile_id']
-    else:
-        continue
+
+def response(call):
+    r = requests.get(call)
+    return r.json()
+
+def prettify(string):
+    return ('{:,}'.format(string))
+
+def countdown(t):
+    while t>= 10:
+        print(t, end='\r')
+        t -= 1
+        time.sleep(1)
+    print('  ', end='\r')
+    while t >= 0:
+        print(t, end='\r')
+        t -= 1
+        time.sleep(1)
+
+#i should be able to add a list of dungeon items and their prices for better price calculation
+
+class getInf:
+    def getProfileID(self): #returns the profile ID of the player
+        self.uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}')['id'] #uuid of the player
         
+        for profile in response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles']:
+            profileName = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name'] #skyblock profile name of the player
+            if profileName == PREFERRED_PROFILE:
+                profileID = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['profile_id']
+                if debugMode == 1:
+                    url = f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}'
+                    print(f'profile URL is {url}')
+                return profileID #skyblock profile id of the player
+            else:
+                continue
+    
+    def getPresentAuctions(self): #returns the player's auctions that are/were up on the auction house
+        return response(f'https://api.hypixel.net/skyblock/auction?key={API_KEY}&profile={z.getProfileID()}')['auctions']
+    
+    def getAuctionUID(self,url): #returns the UID of an auction
+        return response(url)['nbtData']['data']['uid']
+    
+    def getPastSales(self,uid): #returns the past sales of an auction, given the UID
+        url = f'https://sky.coflnet.com/api/auctions/uid/{uid}/sold'
+        if debugMode == 1:
+            print(f'url for past sales is {url}')
+        return response(f'https://sky.coflnet.com/api/auctions/uid/{uid}/sold')
+
+    def getPastAuctionInfo(self,past):
+        url = f'https://sky.coflnet.com/api/auction/{past}'
+        if debugMode == 1:
+            print(f'url for past sales is {url}')
+        return response(f'https://sky.coflnet.com/api/auction/{past}')
+
+    def getAuctionsSold(self,itemID):
+        url = f'https://sky.coflnet.com/api/auctions/tag/{itemID}/sold?page=1&pageSize=200'
+        if debugMode == 1:
+            print(f'url for sold auction list is {url}')
+        return response(f'https://sky.coflnet.com/api/auctions/tag/{itemID}/sold?page=1&pageSize=200')
+
+z = getInf()
+#ugly code over, time for the clean code :)
+
+class getEncoded:
+    def data(raw_data):
+        return nbt.nbt.NBTFile(fileobj=io.BytesIO(base64.b64decode(raw_data)))
+    def id(nbt_data):
+        extra = nbt_data.tags[0].tags[0]['tag']['ExtraAttributes']
+        return extra['id']
+    
+    def name(nbt_data):
+        z = nbt_data.tags[0].tags[0]['tag']['ExtraAttributes']
+        if str(z['id']) == 'PET':
+            petName = response(str(z['petInfo']))['type']
+            return petName
 
 
-auctionsUp = f"https://api.hypixel.net/skyblock/auction?key={API_KEY}&profile={pref_profile_id}"
+
+
+
+#mojangURL = f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}?'
+#profileURL = f'https://api.hypixel.net/player?key={API_KEY}&uuid={}'
+#auctionsUp = f'https://api.hypixel.net/skyblock/auction?key={API_KEY}&profile={pref_profile_id}'
+#auctionInfoURL = f'https://sky.coflnet.com/api/auction/{auctionUUID}'
+#auctionPastSalesURL = f'https://sky.coflnet.com/api/auctions/uid/{auctionUid}/sold'
+#boughtAuctionURL = f'https://sky.coflnet.com/api/auction/{boughtAuctionUUID}'
+#auctionsSoldURL = f'https://sky.coflnet.com/api/auctions/tag/{itemID}/sold?page=1&pageSize=200'
+
+profitList = []
+priceList = []
+
+url = f'https://api.hypixel.net/skyblock/auction?key={API_KEY}&profile={z.getProfileID()}'
 if debugMode == 1:
-    print(f'auctionsUP = {auctionsUp}')
-
-auctionResponse = requests.get(auctionsUp)
-auctionList = auctionResponse.json()['auctions']
+    print(f'url for auctions on AH is {url}')
 
 while True:
-    for auctionItem in auctionList:
+    for auctionItem in z.getPresentAuctions(): #finding price of item
         sold = auctionItem['highest_bid_amount']
         if sold == 0:
-            starting_bid = auctionItem['starting_bid'] 
+            starting_bid = auctionItem['starting_bid']
+            itemName = auctionItem['item_name']
             item_bytes = auctionItem['item_bytes']['data']
-            nbt_data = decode_inventory_data(item_bytes)
-            auctionID = id_extractor_nbt(nbt_data)
-            auctionName = name_extractor_nbt(nbt_data)
+            nbt_data = getEncoded.data(item_bytes)
+            auctionID = getEncoded.id(nbt_data)
+            auctionNameID = getEncoded.name(nbt_data)
             if auctionID == 'PET':
-                print(f'{auctionID} {auctionName} costs {starting_bid}. Claimed: {sold}\n')
-            print(f'{auctionID} costs {starting_bid}. Claimed: {sold}\n')
-        continue
-
-    auctionsSold = f"https://api.hypixel.net/skyblock/auctions_ended?key-{API_KEY}"
-    if debugMode == 1:
-        print(f'auctionsSold = {auctionsSold}')
-    soldauctionResponse = requests.get(auctionsSold)
-    soldauctionList = soldauctionResponse.json()['auctions']
-    
-        
-    for soldItem in soldauctionList:
-        uuid = soldItem['buyer']
-        if uuid == '2e82ec5b72354497adfde07170979a72':
-            continue
-        gzipped_data = soldItem['item_bytes']
-        encoded_nbt_data = decode_inventory_data(gzipped_data)
-        solditemID = id_extractor_nbt(encoded_nbt_data)
-        solditemNAME = name_extractor_nbt(encoded_nbt_data)
-        w = open(r"C:\Users\leonh\AppData\Roaming\githubThings\auctionProfit\Profit.txt" , "a+")
-        price = soldItem['price']
-        print(solditemID)
-        if solditemID == 'PET':
-            print('AHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHAAHAHA')
-            w.write(str(f'{solditemID} + {auctionID} + {solditemNAME}'))
-            w.write(str(f'{starting_bid - price} is profit.'))
-            continue
-        w.write(str(solditemID) + '\n')
-        w.write(str(f'{starting_bid - price} is profit.') + '\n')
-        w.close()
-        continue
-    
-    print('delaying')       
-    time.sleep(30)
-    time.sleep(30)
-    print('looping')
+                itemID = f'PET_{auctionNameID}'
+            else:
+                itemID = auctionID
+            
+            auctionUUID = auctionItem['uuid']
+            
+            if debugMode == 1:
+                xzy = f'https://sky.coflnet.com/api/auction/{auctionUUID}'
+                print(f'url for UID of auction is {xzy}')
+            auctionUid = z.getAuctionUID(f'https://sky.coflnet.com/api/auction/{auctionUUID}/')
+            auctionPastSales = z.getPastSales(auctionUid)
+            if auctionPastSales != []:    
+                for sale in auctionPastSales:
+                    if sale['buyer'] == z.uuid:
+                        boughtAuctionInfo = z.getPastSales(sale['uuid'])
+                        boughtAuctionRawPrice = boughtAuctionInfo['bids'][0]['amount']
+            else:
+                boughtAuctionRawPrice = 1
+                
+            auctionsSold = z.getAuctionsSold(itemID)
+            
+            for soldItem in auctionsSold:
+                uuid = soldItem['auctioneerId']
+                price = soldItem['highestBidAmount']
+            profit = (starting_bid - boughtAuctionRawPrice)*0.99
+            profitList.append(str(profit))
+            priceList.append(str(boughtAuctionRawPrice))
+            print(f'Bought {itemName} for {prettify(boughtAuctionRawPrice)} and selling {itemName} for {prettify(starting_bid)}, making {prettify(profit)}.\n')
+    totalProfit = sum([float(x) for x in profitList])
+    totalCost = sum([float(y) for y in priceList])
+    print(f'The total amount of profit you will make is {prettify(totalProfit)} ({prettify(round(float(100*(totalProfit/totalCost))))}%). You spent {prettify(totalCost)}')
+    countdown(30)
+    os.system('clear')

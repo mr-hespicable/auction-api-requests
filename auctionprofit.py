@@ -2,9 +2,9 @@ import time, io, requests, os, nbt, base64
 
 #thanks to ShadowMobX#0220 for refining this function. give him an internship
 debugMode = 0
-USERNAME = input('paste username here\n')
-API_KEY = input('paste api key here\n')
-PREFERRED_PROFILE = input('paste name of active profile here. case matters\n')
+USERNAME = 'websafe'#input('paste username here\n')
+API_KEY = '73d5e91d-77c2-4df2-97fd-5da88f16ed8e'#input('paste api key here\n')
+PREFERRED_PROFILE = 'Pineapple'#input('paste name of active profile here. case matters\n')
 
 def response(call):
     r = requests.get(call)
@@ -24,7 +24,35 @@ def countdown(t):
         t -= 1
         time.sleep(1)
 
-#i should be able to add a list of dungeon items and their prices for better price calculation
+def getChestPrice(chestType):
+    if chestType == 'Wood':
+        print('nice try')
+        getChestPrice(chestType)
+
+    elif chestType == 'Gold':
+        if itemName == 'Scarf\'s Studies':
+            return 50000
+        if itemName == 'Adaptive Boots':
+            return 1100000
+        if itemName == 'Giant Tooth':
+            return 500000
+        if itemName == 'Wither Catalyst':
+            return 1000000
+        if itemName == 'Wither Boots':
+            return 2500000
+    elif chestType == 'Diamond':
+        if itemName == 'Bonzo\'s Mask':
+            return 1050000
+        if itemName == 'Scarf\s Studies':
+            return 1000000
+        
+    elif chestType == 'Emerald':
+    
+    elif chestType == 'Obsidian':
+    
+    elif chestType == 'Bedrock':
+
+
 
 class getInf:
     def getProfileID(self): #returns the profile ID of the player
@@ -113,7 +141,8 @@ while True:
                         boughtAuctionInfo = z.getPastSales(sale['uuid'])
                         boughtAuctionRawPrice = boughtAuctionInfo['bids'][0]['amount']
             else:
-                boughtAuctionRawPrice = 1
+                chest = int(input(f'Which chest did you get the {itemName} from: '))
+
                 
             auctionsSold = z.getAuctionsSold(itemID)
             

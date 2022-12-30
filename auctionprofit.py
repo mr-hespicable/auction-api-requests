@@ -29,7 +29,6 @@ def countdown(t):
 class getInf:
     def getProfileID(self): #returns the profile ID of the player
         self.uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}')['id'] #uuid of the player
-        
         for profile in response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles']:
             profileName = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name'] #skyblock profile name of the player
             if profileName == PREFERRED_PROFILE:
@@ -64,9 +63,7 @@ class getInf:
         if debugMode == 1:
             print(f'url for sold auction list is {url}')
         return response(f'https://sky.coflnet.com/api/auctions/tag/{itemID}/sold?page=1&pageSize=200')
-
 z = getInf()
-#ugly code over, time for the clean code :)
 
 class getEncoded:
     def data(raw_data):
@@ -80,19 +77,7 @@ class getEncoded:
         if str(z['id']) == 'PET':
             petName = response(str(z['petInfo']))['type']
             return petName
-
-
-
-
-
-#mojangURL = f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}?'
-#profileURL = f'https://api.hypixel.net/player?key={API_KEY}&uuid={}'
-#auctionsUp = f'https://api.hypixel.net/skyblock/auction?key={API_KEY}&profile={pref_profile_id}'
-#auctionInfoURL = f'https://sky.coflnet.com/api/auction/{auctionUUID}'
-#auctionPastSalesURL = f'https://sky.coflnet.com/api/auctions/uid/{auctionUid}/sold'
-#boughtAuctionURL = f'https://sky.coflnet.com/api/auction/{boughtAuctionUUID}'
-#auctionsSoldURL = f'https://sky.coflnet.com/api/auctions/tag/{itemID}/sold?page=1&pageSize=200'
-
+            
 profitList = []
 priceList = []
 

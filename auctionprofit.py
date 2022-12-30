@@ -24,11 +24,12 @@ def countdown(t):
         t -= 1
         time.sleep(1)
 
+lvl_list = [*range(1, 100)]
+
 def getChestPrice(chestType):
     if chestType == 'Wood':
         print('nice try')
         getChestPrice(chestType)
-
     elif chestType == 'Gold':
         if itemName == 'Scarf\'s Studies':
             return 50000
@@ -45,6 +46,11 @@ def getChestPrice(chestType):
             return 1050000
         if itemName == 'Scarf\s Studies':
             return 1000000
+        if itemName == 'Adaptive Boots':
+            return 1250000
+        if itemName == 'Adaptive Helmet':
+            return 1750000
+        if itemName == f'[Lvl {range(1, 100)}] Spirit':
         
     elif chestType == 'Emerald':
     
@@ -141,7 +147,7 @@ while True:
                         boughtAuctionInfo = z.getPastSales(sale['uuid'])
                         boughtAuctionRawPrice = boughtAuctionInfo['bids'][0]['amount']
             else:
-                chest = int(input(f'Which chest did you get the {itemName} from: '))
+                chest = int(input(f'Which chest did you get the {itemName} from: Wood, Gold, Diamond, Emerald, Obsidian, or Bedrock?'))
 
                 
             auctionsSold = z.getAuctionsSold(itemID)

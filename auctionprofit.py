@@ -33,8 +33,6 @@ def countdown(t):
         t -= 1
         time.sleep(1)
 
-lvl_list = [*range(1, 100)]
-
 class getInf:
     def getProfileID(self): #returns the profile ID of the player
         self.uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}')['id'] #uuid of the player

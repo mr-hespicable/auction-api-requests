@@ -2,9 +2,18 @@ import time, io, requests, os, nbt, base64
 
 #thanks to ShadowMobX#0220 for refining this function. give him an internship
 debugMode = 0
-USERNAME = 'websafe'#input('paste username here\n')
-API_KEY = '73d5e91d-77c2-4df2-97fd-5da88f16ed8e'#input('paste api key here\n')
-PREFERRED_PROFILE = 'Pineapple'#input('paste name of active profile here. case matters\n')
+USERNAME = input('paste username here\n')
+API_KEY = input('paste api key here\n')
+def checkProfile():
+    global PREFERRED_PROFILE
+    PREFERRED_PROFILE = input('paste name of active profile here\n')
+    profile_name_list = ['Apple','Banana','Blueberry','Coconut','Cucumber','Grapes','Kiwi','Lemon','Lime','Mango','Orange','Papaya','Pear','Peach','Pineapple','Pomegranate','Raspberry','Strawberry','Tomato','Watermelon','Zucchini']
+    if PREFERRED_PROFILE not in profile_name_list:
+        print('Not a valid profile: try again.')
+        checkProfile()
+    return PREFERRED_PROFILE
+checkProfile()
+
 
 def response(call):
     r = requests.get(call)
@@ -91,6 +100,7 @@ while True:
         if sold == 0:
             starting_bid = auctionItem['starting_bid']
             itemName = auctionItem['item_name']
+            print(f'Checking {itemName}...')
             item_bytes = auctionItem['item_bytes']['data']
             nbt_data = getEncoded.data(item_bytes)
             auctionID = getEncoded.id(nbt_data)

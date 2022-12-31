@@ -26,40 +26,6 @@ def countdown(t):
 
 lvl_list = [*range(1, 100)]
 
-def getChestPrice(chestType):
-    if chestType == 'Wood':
-        print('nice try')
-        getChestPrice(chestType)
-    elif chestType == 'Gold':
-        if itemName == 'Scarf\'s Studies':
-            return 50000
-        if itemName == 'Adaptive Boots':
-            return 1100000
-        if itemName == 'Giant Tooth':
-            return 500000
-        if itemName == 'Wither Catalyst':
-            return 1000000
-        if itemName == 'Wither Boots':
-            return 2500000
-    elif chestType == 'Diamond':
-        if itemName == 'Bonzo\'s Mask':
-            return 1050000
-        if itemName == 'Scarf\s Studies':
-            return 1000000
-        if itemName == 'Adaptive Boots':
-            return 1250000
-        if itemName == 'Adaptive Helmet':
-            return 1750000
-        if itemName == f'[Lvl {range(1, 100)}] Spirit':
-        
-    elif chestType == 'Emerald':
-    
-    elif chestType == 'Obsidian':
-    
-    elif chestType == 'Bedrock':
-
-
-
 class getInf:
     def getProfileID(self): #returns the profile ID of the player
         self.uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}')['id'] #uuid of the player
@@ -147,9 +113,7 @@ while True:
                         boughtAuctionInfo = z.getPastSales(sale['uuid'])
                         boughtAuctionRawPrice = boughtAuctionInfo['bids'][0]['amount']
             else:
-                chest = int(input(f'Which chest did you get the {itemName} from: Wood, Gold, Diamond, Emerald, Obsidian, or Bedrock?'))
-
-                
+                continue
             auctionsSold = z.getAuctionsSold(itemID)
             
             for soldItem in auctionsSold:
@@ -161,6 +125,11 @@ while True:
             print(f'Bought {itemName} for {prettify(boughtAuctionRawPrice)} and selling {itemName} for {prettify(starting_bid)}, making {prettify(profit)}.\n')
     totalProfit = sum([float(x) for x in profitList])
     totalCost = sum([float(y) for y in priceList])
-    print(f'The total amount of profit you will make is {prettify(totalProfit)} ({prettify(round(float(100*(totalProfit/totalCost))))}%). You spent {prettify(totalCost)}')
+    if totalCost == 0:
+        totalCost = 1
+    if totalProfit != 0:
+        print(f'The total amount of profit you will make is {prettify(totalProfit)} ({prettify(round(float(100*(totalProfit/totalCost))))}%). You spent {prettify(totalCost)}')
+    else:
+        print(f'No items were found to have been flipped for a profit.')
     countdown(30)
     os.system('clear')

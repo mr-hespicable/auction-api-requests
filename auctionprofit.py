@@ -1,9 +1,9 @@
 import time, io, requests, os, nbt, base64
 
 #thanks to ShadowMobX#0220 for refining this function. give him an internship
-debugMode = 0
-USERNAME = input('paste username here\n')
-API_KEY = input('paste api key here\n')
+debugMode = 1
+USERNAME = 'GalaxyPugYT'#input('paste username here\n')
+API_KEY = '73d5e91d-77c2-4df2-97fd-5da88f16ed8e'#input('paste api key here\n')
 def checkProfile():
     global PREFERRED_PROFILE
     PREFERRED_PROFILE = input('paste name of active profile here\n')
@@ -55,14 +55,12 @@ class getInf:
     
     def getPastSales(self,uid): #returns the past sales of an auction, given the UID
         url = f'https://sky.coflnet.com/api/auctions/uid/{uid}/sold'
-        if debugMode == 1:
-            print(f'url for past sales is {url}')
         return response(f'https://sky.coflnet.com/api/auctions/uid/{uid}/sold')
 
     def getPastAuctionInfo(self,past):
         url = f'https://sky.coflnet.com/api/auction/{past}'
         if debugMode == 1:
-            print(f'url for past sales is {url}')
+            print(f'url for information of past sale is {url}')
         return response(f'https://sky.coflnet.com/api/auction/{past}')
 
     def getAuctionsSold(self,itemID):
@@ -88,9 +86,7 @@ class getEncoded:
 profitList = []
 priceList = []
 
-url = f'https://api.hypixel.net/skyblock/auction?key={API_KEY}&profile={z.getProfileID()}'
-if debugMode == 1:
-    print(f'url for auctions on AH is {url}')
+os.system('clear')
 
 while True:
     for auctionItem in z.getPresentAuctions(): #finding price of item
@@ -138,6 +134,6 @@ while True:
     if totalProfit != 0:
         print(f'The total amount of profit you will make is {prettify(totalProfit)} ({prettify(round(float(100*(totalProfit/totalCost))))}%). You spent {prettify(totalCost)}')
     else:
-        print(f'No items were found to have been flipped for a profit.')
+        print(f'No items were found to have been flipped for a profit, or no items are currently on {USERNAME}\'s auction.')
     countdown(30)
     os.system('clear')

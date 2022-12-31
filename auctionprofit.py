@@ -1,18 +1,9 @@
 import time, io, requests, os, nbt, base64
 
 #thanks to ShadowMobX#0220 for refining this function. give him an internship
-debugMode = 1
-USERNAME = 'GalaxyPugYT'#input('paste username here\n')
-API_KEY = '73d5e91d-77c2-4df2-97fd-5da88f16ed8e'#input('paste api key here\n')
-def checkProfile():
-    global PREFERRED_PROFILE
-    PREFERRED_PROFILE = input('paste name of active profile here\n')
-    profile_name_list = ['Apple','Banana','Blueberry','Coconut','Cucumber','Grapes','Kiwi','Lemon','Lime','Mango','Orange','Papaya','Pear','Peach','Pineapple','Pomegranate','Raspberry','Strawberry','Tomato','Watermelon','Zucchini']
-    if PREFERRED_PROFILE not in profile_name_list:
-        print('Not a valid profile: try again.')
-        checkProfile()
-    return PREFERRED_PROFILE
-checkProfile()
+debugMode = 0
+USERNAME = input('paste username here\n')
+API_KEY = input('paste api key here\n')
 
 
 def response(call):
@@ -34,8 +25,8 @@ def countdown(t):
         time.sleep(1)
 
 class getInf:
+    uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}')['id'] #uuid of the player
     def getProfileID(self): #returns the profile ID of the player
-        self.uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}')['id'] #uuid of the player
         for profile in response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles']:
             profileName = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name'] #skyblock profile name of the player
             if profileName == PREFERRED_PROFILE:
@@ -82,7 +73,21 @@ class getEncoded:
         if str(z['id']) == 'PET':
             petName = response(str(z['petInfo']))['type']
             return petName
-            
+
+
+def checkProfile():
+    global PREFERRED_PROFILE
+    PREFERRED_PROFILE = input('paste name of active profile here\n')
+    profile_name_list = []
+    for profile in response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={z.uuid}')['player']['stats']['SkyBlock']['profiles']:
+        name = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={z.uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name']
+        profile_name_list.append(name)
+    if PREFERRED_PROFILE not in profile_name_list:
+        print(f'Not a valid profile: try again. Your profile options are {profile_name_list}')
+        checkProfile()
+    return PREFERRED_PROFILE
+checkProfile()
+
 profitList = []
 priceList = []
 
@@ -111,6 +116,7 @@ while True:
                 print(f'url for UID of auction is {xzy}')
             auctionUid = z.getAuctionUID(f'https://sky.coflnet.com/api/auction/{auctionUUID}/')
             auctionPastSales = z.getPastSales(auctionUid)
+
             if auctionPastSales != []:    
                 for sale in auctionPastSales:
                     if sale['buyer'] == z.uuid:

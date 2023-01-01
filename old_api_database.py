@@ -1,10 +1,8 @@
 import time, io, requests, os, nbt, base64
 
 #thanks to ShadowMobX#0220 for refining this function. give him an internship
-debugMode = 0
 USERNAME = input('paste username here\n')
 API_KEY = input('paste api key here\n')
-
 
 def response(call):
     r = requests.get(call)
@@ -13,27 +11,13 @@ def response(call):
 def prettify(string):
     return ('{:,}'.format(string))
 
-def countdown(t):
-    while t>= 10:
-        print(t, end='\r')
-        t -= 1
-        time.sleep(1)
-    print('  ', end='\r')
-    while t >= 0:
-        print(t, end='\r')
-        t -= 1
-        time.sleep(1)
-
-class getInf:
+class getApi:
     uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}')['id'] #uuid of the player
     def getProfileID(self): #returns the profile ID of the player
         for profile in response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles']:
             profileName = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name'] #skyblock profile name of the player
             if profileName == PREFERRED_PROFILE:
                 profileID = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['profile_id']
-                if debugMode == 1:
-                    url = f'https://api.hypixel.net/player?key={API_KEY}&uuid={self.uuid}'
-                    print(f'profile URL is {url}')
                 return profileID #skyblock profile id of the player
             else:
                 continue
@@ -50,16 +34,12 @@ class getInf:
 
     def getPastAuctionInfo(self,past):
         url = f'https://sky.coflnet.com/api/auction/{past}'
-        if debugMode == 1:
-            print(f'url for information of past sale is {url}')
         return response(f'https://sky.coflnet.com/api/auction/{past}')
 
     def getAuctionsSold(self,itemID):
         url = f'https://sky.coflnet.com/api/auctions/tag/{itemID}/sold?page=1&pageSize=200'
-        if debugMode == 1:
-            print(f'url for sold auction list is {url}')
         return response(f'https://sky.coflnet.com/api/auctions/tag/{itemID}/sold?page=1&pageSize=200')
-z = getInf()
+z = getApi()
 
 class getEncoded:
     def data(raw_data):
@@ -91,15 +71,12 @@ checkProfile()
 profitList = []
 priceList = []
 
-os.system('clear')
-
 while True:
     for auctionItem in z.getPresentAuctions(): #finding price of item
         sold = auctionItem['highest_bid_amount']
         if sold == 0:
             starting_bid = auctionItem['starting_bid']
             itemName = auctionItem['item_name']
-            print(f'Checking {itemName}...')
             item_bytes = auctionItem['item_bytes']['data']
             nbt_data = getEncoded.data(item_bytes)
             auctionID = getEncoded.id(nbt_data)
@@ -111,9 +88,6 @@ while True:
             
             auctionUUID = auctionItem['uuid']
             
-            if debugMode == 1:
-                xzy = f'https://sky.coflnet.com/api/auction/{auctionUUID}'
-                print(f'url for UID of auction is {xzy}')
             auctionUid = z.getAuctionUID(f'https://sky.coflnet.com/api/auction/{auctionUUID}/')
             auctionPastSales = z.getPastSales(auctionUid)
 
@@ -132,14 +106,6 @@ while True:
             profit = (starting_bid - boughtAuctionRawPrice)*0.99
             profitList.append(str(profit))
             priceList.append(str(boughtAuctionRawPrice))
-            print(f'Bought {itemName} for {prettify(boughtAuctionRawPrice)} and selling {itemName} for {prettify(starting_bid)}, making {prettify(profit)}.\n')
-    totalProfit = sum([float(x) for x in profitList])
+            totalProfit = sum([float(x) for x in profitList])
     totalCost = sum([float(y) for y in priceList])
-    if totalCost == 0:
-        totalCost = 1
-    if totalProfit != 0:
-        print(f'The total amount of profit you will make is {prettify(totalProfit)} ({prettify(round(float(100*(totalProfit/totalCost))))}%). You spent {prettify(totalCost)}')
-    else:
-        print(f'No items were found to have been flipped for a profit, or no items are currently on {USERNAME}\'s auction.')
-    countdown(30)
     os.system('clear')

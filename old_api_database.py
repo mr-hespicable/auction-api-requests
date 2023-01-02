@@ -23,15 +23,7 @@ def checkProfile(uuid, api_key):
         return PREFERRED_PROFILE
 
 class apiRequests:
-    def getProfileID(username, api_key, profile): #returns the profile ID of the player
-        uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{username}')['id'] #uuid of the player
-        for profile in response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles']:
-            profileName = response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name'] #skyblock profile name of the player
-            if profileName == profile:
-                profileID = response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['profile_id']
-                return profileID  #skyblock profile id of the player
-            else:
-                continue
+    
 
     def getPresentAuctions(api_key): #returns the player's auctions that are/were up on the auction house
         return response(f'https://api.hypixel.net/skyblock/auction?key={api_key}&profile={getApi.getProfileID()}')['auctions']

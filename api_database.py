@@ -5,7 +5,6 @@ import io, requests, os, nbt, base64
 def __response(call):
     r = requests.get(call)
     return r.json()
-
 def __ProfileStats(uuid):
     url = f'https://sky.shiiyu.moe/api/v2/profile/{uuid}'
     profiles = __response(url)['profiles']
@@ -21,13 +20,15 @@ def __ProfileStats(uuid):
 def ProfileName(uuid):
     'Returns the name of the profile, given a uuid.'
     return __ProfileStats(uuid)[0]
-
 def ProfileID(uuid):
     'Returns the id of the profile, given a uuid.'
     return __ProfileStats(uuid)[1]
 
 class get_auctions:
-    def requested(api_key, profile_id, uuid):
+    def __requestedAuctions(api_key):
         url = f'https://api.hypixel.net/skyblock/auction?key={api_key}&profile={ProfileID()}'
+        return __response(url)['auctions']
+    
+    def price():
 
     

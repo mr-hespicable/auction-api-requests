@@ -1,8 +1,8 @@
 import io, requests, os, nbt, base64
 
 #thanks to ShadowMobX#0220 for refining this function. give him an internship
-USERNAME = input('paste username here\n')
-API_KEY = input('paste api key here\n')
+#USERNAME = input('paste username here\n')
+#API_KEY = input('paste api key here\n')
 
 def response(call):
     r = requests.get(call)
@@ -11,18 +11,18 @@ def response(call):
 def prettify(string):
     return ('{:,}'.format(string))
 
-def getProfileID(username, api_key, ): #returns the profile ID of the player
+def getProfileID(username, api_key,): #returns the profile ID of the player
     uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{username}')['id'] #uuid of the player
-    for profile in response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles']:
-        profileName = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name'] #skyblock profile name of the player
+    for profile in response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles']:
+        profileName = response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name'] #skyblock profile name of the player
         if profileName == PREFERRED_PROFILE:
-            profileID = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['profile_id']
+            profileID = response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['profile_id']
             return profileID,  #skyblock profile id of the player
         else:
             continue
 
-def getPresentAuctions(): #returns the player's auctions that are/were up on the auction house
-    return response(f'https://api.hypixel.net/skyblock/auction?key={API_KEY}&profile={getProfileID()}')['auctions']
+def getPresentAuctions(api_key): #returns the player's auctions that are/were up on the auction house
+    return response(f'https://api.hypixel.net/skyblock/auction?key={api_key}&profile={getProfileID()}')['auctions']
 
 def getAuctionUID(url): #returns the UID of an auction
     return response(url)['nbtData']['data']['uid']
@@ -52,12 +52,12 @@ def name(nbt_data):
         return petName
 
 
-def checkProfile(uuid):
+def checkProfile(uuid, api_key):
     global PREFERRED_PROFILE
     PREFERRED_PROFILE = input('paste name of active profile here\n')
     profile_name_list = []
-    for profile in response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles']:
-        name = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name']
+    for profile in response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles']:
+        name = response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name']
         profile_name_list.append(name)
     if PREFERRED_PROFILE not in profile_name_list:
         print(f'Not a valid profile: try again. Your profile options are {profile_name_list}')

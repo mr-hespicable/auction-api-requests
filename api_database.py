@@ -1,19 +1,27 @@
 import io, requests, os, nbt, base64
 
-def response(call):
-    r = requests.get(call)
-    return r.json()
 
-def prettify(string):
-    return ('{:,}'.format(string))
+class get:
+    def __response(call):
+        r = requests.get(call)
+        return r.json()
 
-def getProfileCuteName(api_key, uuid):
-    profile_list = []
-    for profile in response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles']:
-            name = response(f'https://api.hypixel.net/player?key={api_key}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name']
-            profile_list.append(name)
-    length = len(profile_list)
-    return length
-        
-list = getProfileCuteName('73d5e91d-77c2-4df2-97fd-5da88f16ed8e', '2e82ec5b72354497adfde07170979a72')
-print(list)
+    def __ProfileStats(uuid):
+        profiles = get.response(f'https://sky.shiiyu.moe/api/v2/profile/{uuid}')['profiles']
+        for profile in profiles:
+            profile_id = profiles[profile]['profile_id']
+            cute_name = profiles[profile]['cute_name']
+            current = profiles[profile]['current']
+            if current == True:
+                return cute_name, profile_id
+            else:
+                continue
+
+    def ProfileName(uuid):
+        'Returns the name of the profile, given a uuid.'
+        return get.ProfileStats(uuid)[0]
+
+    def ProfileID(uuid):
+        'Returns the id of the profile, given a uuid.'
+        return get.ProfileStats(uuid)[1]
+    

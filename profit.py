@@ -1,8 +1,8 @@
 import api_database as api
 
 uuid = api.get.uuid('websafe')
-
-active_auctions = api.get._active_auctions('73d5e91d-77c2-4df2-97fd-5da88f16ed8e', uuid, 2)
+num = 0
+active_auctions = api.get._active_auctions('73d5e91d-77c2-4df2-97fd-5da88f16ed8e', uuid, num)
 
 id = active_auctions[0]
 uuid = active_auctions[1]
@@ -23,6 +23,5 @@ claimed_bidders = active_auctions[15]
 highest_bid_amount = active_auctions[16]
 bids = active_auctions[17]
 
-
-
+print(id)
 

@@ -35,7 +35,7 @@ def __name(nbt_data):
         petName = _response(str(z['petInfo']))['type']
         return petName
 
-class get:   
+class get:
     def uuid(username):
         "Returns the name and uuid of the player, given a username."
         url = f'https://api.mojang.com/users/profiles/minecraft/{username}'

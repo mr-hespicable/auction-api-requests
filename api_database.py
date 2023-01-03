@@ -42,30 +42,38 @@ class get:
         uuid = _response(url)
         return uuid['id']
 
-    def _active_auctions(api_key, Uuid):
-        "Returns a list of the player's active auctions, as well as information about the auctions, given an api key and the uuid of the player."
+    def _active_auctions(api_key, Uuid, num):
+        """
+        Returns a list of the player's active auctions, as well as information about the auctions.
+        NEEDS: api_key, uuid, # auction
+        if # auction > then range of auction, # auction is set to highest available value.
+        """
         requested_auctions_url = f'https://api.hypixel.net/skyblock/auction?key={api_key}&profile={ProfileID(Uuid)}'
         auctions = _response(requested_auctions_url)['auctions']
-        for item in auctions:
-            id = item['_id']
-            uuid = item['uuid']
-            auctioneer = item['auctioneer']
-            profile_id = item['profile_id']
-            coop = list(item['coop']) #this is a list
-            start = item['start']
-            end = item['end']
-            item_name = item['item_name']
-            item_lore = item['item_lore']
-            extra = item['extra']
-            category = item['category']
-            tier = item['tier']
-            starting_bid = item['starting_bid']
-            item_bytes = item['item_bytes']['data']
-            claimed = item['claimed']
-            claimed_bidders = list(item['claimed_bidders']) #this is a list
-            highest_bid_amount = item['highest_bid_amount']
-            bids = list(item['bids']) #this is a list
-        return id, uuid, auctioneer, profile_id, coop, start, end, item_name, item_lore, extra, category, tier, starting_bid, item_bytes, claimed, claimed_bidders, bin, highest_bid_amount, bids, profile_id
+        g = len(auctions)-1
+        if num > g:
+            num = g
+
+        id = auctions[num]['_id']
+        uuid = auctions[num]['uuid']
+        auctioneer = auctions[num]['auctioneer']
+        profile_id = auctions[num]['profile_id']
+        coop = auctions[num]['coop'] #this is a list
+        start = auctions[num]['start']
+        end = auctions[num]['end']
+        item_name = auctions[num]['item_name']
+        item_lore = auctions[num]['item_lore']
+        extra = auctions[num]['extra']
+        category = auctions[num]['category']
+        tier = auctions[num]['tier']
+        starting_bid = auctions[num]['starting_bid']
+        item_bytes = auctions[num]['item_bytes']['data']
+        claimed = auctions[num]['claimed']
+        claimed_bidders = auctions[num]['claimed_bidders'] #this is a list
+        highest_bid_amount = auctions[num]['highest_bid_amount']
+        bids = auctions[num]['bids'] #this is a list
+        
+        return id, uuid, auctioneer, profile_id, coop, start, end, item_name, item_lore, extra, category, tier, starting_bid, item_bytes, claimed, claimed_bidders, highest_bid_amount, bids
     
     def _auction_info(auction_uuid):
         "Returns various info about the auction"

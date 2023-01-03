@@ -35,47 +35,43 @@ def __name(nbt_data):
         petName = _response(str(z['petInfo']))['type']
         return petName
 
-class get:
+class baseAPI:
+    """
+    Base class for API
+    """
     def uuid(username):
         "Returns the name and uuid of the player, given a username."
         url = f'https://api.mojang.com/users/profiles/minecraft/{username}'
         uuid = _response(url)
         return uuid['id']
 
-    def _active_auctions(api_key, Uuid, num):
+    def __active_auctions(api_key, Uuid):
         """
-        Returns a list of the player's active auctions, as well as information about the auctions.
-        NEEDS: api_key, uuid, # auction
-        if # auction > then range of auction, # auction is set to highest available value.
+        Gives a list of the player's active auctions, as well as information about the auctions.
+        NEEDS: api_key, uuid
         """
         requested_auctions_url = f'https://api.hypixel.net/skyblock/auction?key={api_key}&profile={ProfileID(Uuid)}'
         auctions = _response(requested_auctions_url)['auctions']
-        g = len(auctions)-1
-        if num > g:
-            num = g
 
-        id = auctions[num]['_id']
-        uuid = auctions[num]['uuid']
-        auctioneer = auctions[num]['auctioneer']
-        profile_id = auctions[num]['profile_id']
-        coop = auctions[num]['coop'] #this is a list
-        start = auctions[num]['start']
-        end = auctions[num]['end']
-        item_name = auctions[num]['item_name']
-        item_lore = auctions[num]['item_lore']
-        extra = auctions[num]['extra']
-        category = auctions[num]['category']
-        tier = auctions[num]['tier']
-        starting_bid = auctions[num]['starting_bid']
-        item_bytes = auctions[num]['item_bytes']['data']
-        claimed = auctions[num]['claimed']
-        claimed_bidders = auctions[num]['claimed_bidders'] #this is a list
-        highest_bid_amount = auctions[num]['highest_bid_amount']
-        bids = auctions[num]['bids'] #this is a list
-        
-        return id, uuid, auctioneer, profile_id, coop, start, end, item_name, item_lore, extra, category, tier, starting_bid, item_bytes, claimed, claimed_bidders, highest_bid_amount, bids
-    
-    def _auction_info(auction_uuid):
+        id = auctions['_id']
+        uuid = auctions['uuid']
+        auctioneer = auctions['auctioneer']
+        profile_id = auctions['profile_id']
+        coop = auctions['coop'] #this is a list
+        start = auctions['start']
+        end = auctions['end']
+        item_name = auctions['item_name']
+        item_lore = auctions['item_lore']
+        extra = auctions['extra']
+        category = auctions['category']
+        tier = auctions['tier']
+        starting_bid = auctions['starting_bid']
+        item_bytes = auctions['item_bytes']['data']
+        claimed = auctions['claimed']
+        claimed_bidders = auctions['claimed_bidders'] #this is a list
+        highest_bid_amount = auctions['highest_bid_amount']
+        bids = auctions['bids'] #this is a list
+    def __auction_info(auction_uuid):
         "Returns various info about the auction"
         url = f'https://sky.coflnet.com/api/auction/{auction_uuid}'
         response = _response(url)
@@ -105,25 +101,15 @@ class get:
         tier = response['tier']
         bin = response['bin']
         flatNbt = response['flatNbt']
-
-        return enchantments, uuid, count, startingBid, tag, itemName, start, end, auctioneerId, profileId, highestBidAmount, bids, bidder, profileId, amount, timestamp, anvilUses, nbtData, itemCreatedAt, reforge, category, tier, bin, flatNbt
-
-    def _past_sales(uid):
+    def __past_sales(uid):
         "Returns a list of the past sales of the specified item, given its uid."
         url = f'https://sky.coflnet.com/api/auctions/uid/{uid}/sold'
         response = _response(url)
         past_sales = list(response['pastSales'])
         for item in past_sales:
-            seller = item['seller']
-            uuid = item['uuid']
-            buyer = item['buyer']
-            timestamp = item['timetamp']
-        return seller, uuid, buyer, timestamp
+            return item['seller'], item['uuid'], item['buyer'], item['timestamp']
 
 
-
-
-            
 
             
 

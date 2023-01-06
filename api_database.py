@@ -18,18 +18,18 @@ def __ProfileStats(uuid):
             continue
 
 def ProfileName(uuid):
-    'Returns the name of the profile, given a uuid.'
+    'Returns the name of the skyblock profile, given a uuid.'
     return __ProfileStats(uuid)[0]
 def ProfileID(uuid):
-    'Returns the id of the profile, given a uuid.'
+    'Returns the id of the skyblock profile, given a uuid.'
     return __ProfileStats(uuid)[1]
 
-def __decode(raw_data):
+def decode(raw_data):
     return nbt.nbt.NBTFile(fileobj=io.BytesIO(base64.b64decode(raw_data)))
-def __id(nbt_data):
+def id(nbt_data):
     extra = nbt_data.tags[0].tags[0]['tag']['ExtraAttributes']
     return extra['id']
-def __name(nbt_data):
+def name(nbt_data):
     z = nbt_data.tags[0].tags[0]['tag']['ExtraAttributes']
     if str(z['id']) == 'PET':
         petName = _response(str(z['petInfo']))['type']
@@ -45,7 +45,7 @@ class baseAPI:
         uuid = _response(url)
         return uuid['id']
 
-    def __active_auctions(api_key, Uuid):
+    def active_auctions(api_key, Uuid):
         """
         Gives a list of the player's active auctions, as well as information about the auctions.
         NEEDS: api_key, uuid
@@ -71,7 +71,7 @@ class baseAPI:
         claimed_bidders = auctions['claimed_bidders'] #this is a list
         highest_bid_amount = auctions['highest_bid_amount']
         bids = auctions['bids'] #this is a list
-    def __auction_info(auction_uuid):
+    def auction_info(auction_uuid):
         "Returns various info about the auction"
         url = f'https://sky.coflnet.com/api/auction/{auction_uuid}'
         response = _response(url)
@@ -101,7 +101,7 @@ class baseAPI:
         tier = response['tier']
         bin = response['bin']
         flatNbt = response['flatNbt']
-    def __past_sales(uid):
+    def past_sales(uid):
         "Returns a list of the past sales of the specified item, given its uid."
         url = f'https://sky.coflnet.com/api/auctions/uid/{uid}/sold'
         response = _response(url)

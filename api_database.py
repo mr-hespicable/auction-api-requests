@@ -17,15 +17,6 @@ def __ProfileStats(uuid):
         else:
             continue
 
-<<<<<<< Updated upstream
-def ProfileName(uuid):
-    'Returns the name of the skyblock profile, given a uuid.'
-    return __ProfileStats(uuid)[0]
-def ProfileID(uuid):
-    'Returns the id of the skyblock profile, given a uuid.'
-    return __ProfileStats(uuid)[1]
-=======
->>>>>>> Stashed changes
 
 def decode(raw_data):
     return nbt.nbt.NBTFile(fileobj=io.BytesIO(base64.b64decode(raw_data)))
@@ -58,11 +49,7 @@ class _baseAPI:
         uuid = _response(url)
         return uuid['id']
 
-<<<<<<< Updated upstream
-    def active_auctions(api_key, Uuid):
-=======
     def active_auctions(username, api_key):
->>>>>>> Stashed changes
         """
         Gives a list of the player's active auctions, as well as information about the auctions.
         NEEDS: api_key, uuid
@@ -88,11 +75,8 @@ class _baseAPI:
         claimed_bidders = auctions['claimed_bidders'] #this is a list
         highest_bid_amount = auctions['highest_bid_amount']
         bids = auctions['bids'] #this is a list
-<<<<<<< Updated upstream
-=======
         
         return id, uuid, auctioneer, profile_id, coop, start, end, item_name, item_lore, extra, category, tier, starting_bid, item_bytes, claimed, claimed_bidders, highest_bid_amount, bids
->>>>>>> Stashed changes
     def auction_info(auction_uuid):
         "Returns various info about the auction"
         url = f'https://sky.coflnet.com/api/auction/{auction_uuid}'

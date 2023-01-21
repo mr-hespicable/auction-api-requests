@@ -1,5 +1,5 @@
-import api_database
+import api_requests
 
 
-api_database.get.uuid(1)
+api_requests.get.uuid(1)
 

@@ -1,8 +1,7 @@
-import io, requests, os, nbt, base64
+import io, requests, os, nbt, base64, re
 
 #thanks to ShadowMobX#0220 for refining this function. give him an internship
-USERNAME = input('paste username here\n')
-API_KEY = input('paste api key here\n')
+
 
 def response(call):
     r = requests.get(call)
@@ -11,18 +10,16 @@ def response(call):
 def prettify(string):
     return ('{:,}'.format(string))
 
-def checkProfile(uuid):
-    PREFERRED_PROFILE = input('paste name of active profile here\n')
-    profile_name_list = []
-    for profile in response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles']:
-        name = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name']
-        profile_name_list.append(name)
-    if PREFERRED_PROFILE not in profile_name_list:
-        print(f'Not a valid profile: try again. Your profile options are {profile_name_list}')
-        checkProfile()
-    return PREFERRED_PROFILE
+profile_name_list = []
+def checkProfile():
+    profiles = response(f'https://sky.shiiyu.moe/api/v2/profile/{USERNAME}')['profiles']
+    for profile in profiles:
+        if profiles[profile]['current'] == False:
+            continue
+        elif profiles[profile]['current'] == True:
+            return profiles[profile]['cute_name']
 
-def getProfileID(username, api_key, ): #returns the profile ID of the player
+def getProfileID(username, api_key): #returns the profile ID of the player
     uuid = response(f'https://api.mojang.com/users/profiles/minecraft/{username}')['id'] #uuid of the player
     for profile in response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles']:
         profileName = response(f'https://api.hypixel.net/player?key={API_KEY}&uuid={uuid}')['player']['stats']['SkyBlock']['profiles'][profile]['cute_name'] #skyblock profile name of the player
@@ -33,7 +30,7 @@ def getProfileID(username, api_key, ): #returns the profile ID of the player
             continue
 
 def getPresentAuctions(): #returns the player's auctions that are/were up on the auction house
-    return response(f'https://api.hypixel.net/skyblock/auction?key={API_KEY}&profile={getProfileID()}')['auctions']
+    return response(f'https://api.hypixel.net/skyblock/auction?key={API_KEY}&profile={getProfileID(USERNAME, API_KEY)}')['auctions']
 
 def getAuctionUID(url): #returns the UID of an auction
     return response(url)['nbtData']['data']['uid']
@@ -59,15 +56,18 @@ def id(nbt_data):
 def name(nbt_data):
     z = nbt_data.tags[0].tags[0]['tag']['ExtraAttributes']
     if str(z['id']) == 'PET':
-        petName = response(str(z['petInfo']))['type']
-        return petName
+        pet_string = str(z['petInfo'])
+        z = str(re.search("\".*\"", str(re.search(":\".*\",", str(re.search("\"type\":\".*\",\"a", pet_string))))).group()).replace('\"', '')
+        return f'PET_{z}'
+            
 
-
-
-profitList = []
-priceList = []
+USERNAME = 'websafe'#input('paste username here\n')
+API_KEY = '6fa96f15-a6bd-40cc-b9fa-c518d30deb79'#input('paste api key here\n')
+UUID = response(f'https://api.mojang.com/users/profiles/minecraft/{USERNAME}')['id']
 
 while True:
+    profitList = []
+    priceList = []
     for auctionItem in getPresentAuctions(): #finding price of item
         sold = auctionItem['highest_bid_amount']
         if sold == 0:
@@ -89,11 +89,11 @@ while True:
 
             if auctionPastSales != []:    
                 for sale in auctionPastSales:
-                    if sale['buyer'] == uuid:
-                        boughtAuctionInfo = getPastSales(sale['uuid'])
-                        boughtAuctionRawPrice = boughtAuctionInfo['bids'][0]['amount']
-            else:
-                continue
+                    if sale['buyer'] == UUID and len(auctionPastSales) > 1:
+                        boughtAuctionInfo = getPastAuctionInfo(sale['uuid'])['bids']
+                        boughtAuctionRawPrice = boughtAuctionInfo[0]['amount']
+                    else:
+                        boughtAuctionRawPrice = 0
             auctionsSold = getAuctionsSold(itemID)
 
             for soldItem in auctionsSold:
@@ -102,6 +102,10 @@ while True:
             profit = (starting_bid - boughtAuctionRawPrice)*0.99
             profitList.append(str(profit))
             priceList.append(str(boughtAuctionRawPrice))
-            totalProfit = sum([float(x) for x in profitList])
-    totalCost = sum([float(y) for y in priceList])
-    os.system('clear')
+            totalProfit = prettify(round(int(sum([float(x) for x in profitList]))))
+            totalCost = prettify(int(sum([float(y) for y in priceList])))
+    print(f"""
+          TOTAL PROFIT IN AUCTION HOUSE: {totalProfit}
+          TOTAL AMOUNT SPENT ON ALL ITEMS IN AUCTION HOUSE: {totalCost}
+          """)
+    exit()

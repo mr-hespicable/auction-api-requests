@@ -6,7 +6,6 @@ import io, requests, os, nbt, base64, re
 def response(call):
     r = requests.get(call)
     return r.json()
-
 def prettify(string):
     return ('{:,}'.format(string))
 
@@ -59,7 +58,6 @@ def name(nbt_data):
         pet_string = str(z['petInfo'])
         z = str(re.search("\".*\"", str(re.search(":\".*\",", str(re.search("\"type\":\".*\",\"a", pet_string))))).group()).replace('\"', '')
         return f'PET_{z}'
-            
 
 USERNAME = 'websafe'#input('paste username here\n')
 API_KEY = '6fa96f15-a6bd-40cc-b9fa-c518d30deb79'#input('paste api key here\n')
